@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane prefHeight="540.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.alexhyisen.rse.view.Controller">
+   <center>
+      <TabPane prefHeight="419.0" prefWidth="422.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+        <tabs>
+          <Tab text="File">
+               <content>
+                  <BorderPane>
+                     <right>
+                        <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" BorderPane.alignment="CENTER">
+                           <children>
+                              <Button id="goButton" fx:id="goButton" mnemonicParsing="false" onAction="#handleGoButtonAction" text="Go" />
+                              <Button id="loadButton" fx:id="loadButton" mnemonicParsing="false" onAction="#handleLoadButtonAction" text="Load">
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin></Button>
+                              <Button id="saveButton" fx:id="saveButton" mnemonicParsing="false" onAction="#handleSaveButtonAction" text="Save" />
+                           </children>
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
+                           <BorderPane.margin>
+                              <Insets />
+                           </BorderPane.margin>
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                        </VBox>
+                     </right>
+                     <center>
+                        <FlowPane hgap="10.0" prefHeight="200.0" prefWidth="200.0" vgap="10.0" BorderPane.alignment="CENTER">
+                           <children>
+                              <Label text="path">
+                                 <FlowPane.margin>
+                                    <Insets />
+                                 </FlowPane.margin></Label>
+                              <TextField id="savePathTextField" fx:id="savePathTextField" alignment="CENTER" prefColumnCount="48" promptText="input save file path" />
+                              <Label layoutX="10.0" layoutY="10.0" text="name" />
+                              <TextField fx:id="saveNameTextField" alignment="CENTER" prefColumnCount="10" promptText="input save filename" />
+                           </children>
+                           <BorderPane.margin>
+                              <Insets />
+                           </BorderPane.margin>
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                        </FlowPane>
+                     </center>
+                  </BorderPane>
+               </content>
+          </Tab>
+          <Tab text="Pawn">
+               <content>
+                  <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                     <children>
+                        <ListView id="pawnsListView" fx:id="pawnsListView" prefHeight="200.0" prefWidth="100.0" />
+                        <VBox id="skillsVBox" fx:id="skillsVBox" alignment="TOP_CENTER" spacing="10.0">
+                           <children>
+                              <Label id="traitsVBox" text="Skills" textAlignment="CENTER" />
+                              <HBox spacing="10.0">
+                                 <children>
+                                    <Label alignment="CENTER" prefWidth="150.0" text="name" />
+                                    <Label alignment="CENTER" prefWidth="100.0" text="passion" />
+                                    <Label alignment="CENTER" prefWidth="250.0" text="level" />
+                                 </children>
+                              </HBox>
+                           </children></VBox>
+                        <Separator orientation="VERTICAL" prefHeight="200.0">
+                           <HBox.margin>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </HBox.margin>
+                        </Separator>
+                        <VBox id="traitsVBox" fx:id="traitsVBox" alignment="TOP_CENTER" spacing="10.0">
+                           <children>
+                              <Label id="traitsVBox" text="Traits" textAlignment="CENTER" />
+                              <HBox alignment="TOP_CENTER">
+                                 <children>
+                                    <Label alignment="CENTER" prefWidth="130.0" text="def" />
+                                    <Label alignment="CENTER" prefWidth="70.0" text="degree" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                     </children>
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                  </HBox>
+               </content>
+          </Tab>
+        </tabs>
+      </TabPane>
+   </center>
+   <bottom>
+      <Label id="msgLabel" fx:id="msgLabel" text="info" BorderPane.alignment="CENTER" />
+   </bottom>
+</BorderPane>
