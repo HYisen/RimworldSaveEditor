@@ -162,8 +162,9 @@ public class Data {
         TransformerFactory tf=TransformerFactory.newInstance();
         Transformer transformer=tf.newTransformer();
         DOMSource source=new DOMSource(doc);
-        StreamResult result=new StreamResult(new FileWriter(new File(filename)));
+        StreamResult result=new StreamResult(new OutputStreamWriter(new FileOutputStream(filename),"UTF-8"));
         transformer.transform(source,result);
+        result.getWriter().close();
     }
 
 
