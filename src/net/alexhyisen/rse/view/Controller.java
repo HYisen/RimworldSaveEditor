@@ -7,24 +7,30 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import net.alexhyisen.rse.model.Data;
+import net.alexhyisen.rse.model.Info;
 import net.alexhyisen.rse.model.Pawn;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 
 public class Controller{
     @FXML private Label msgLabel;
     @FXML private TextField savePathTextField;
     @FXML private TextField saveNameTextField;
+    @FXML private TextField gamePathTextField;
     @FXML private ListView<String> pawnsListView;
     @FXML private VBox traitsVBox;
     @FXML private VBox skillsVBox;
 
     private Logger logger;
     private Data data;
+    private Info info;
 
     private static final String FILENAME_SUFFIX=".rws";
 
@@ -43,7 +49,7 @@ public class Controller{
         skillsVBox.getChildren().remove(2,skillsVBox.getChildren().size());
         Pawn pawn=data.getPawns().get(newValue);
         Arrays.stream(pawn.getTraits())
-                .map(TraitNode::new)
+                .map(v->new TraitNode(v,info))
                 .forEach(traitsVBox.getChildren()::add);
         Arrays.stream(pawn.getSkills())
                 .map(SkillNode::new)
@@ -59,6 +65,10 @@ public class Controller{
             data=new Data();
             logger.push("initiate data");
         }
+        if (info==null){
+            info=new Info();
+            logger.push("initiate info");
+        }
         if(saveNameTextField.getText().isEmpty()){
             saveNameTextField.setText("Autosave-2");
             logger.push("offer a default save path");
@@ -67,8 +77,18 @@ public class Controller{
             savePathTextField.setText("C:\\Users\\Alex\\AppData\\LocalLow\\Ludeon Studios\\RimWorld by Ludeon Studios\\Saves");
             logger.push("offer a default save name");
         }
+        if(gamePathTextField.getText().isEmpty()){
+            gamePathTextField.setText("D:\\Steam\\steamapps\\common\\RimWorld\\Mods\\Core\\Defs\\TraitDefs");
+            logger.push("offer a default gamw path");
+        }
 
-
+        info=new Info();
+        try {
+            info.read("D:\\Steam\\steamapps\\common\\RimWorld\\Mods\\Core\\Defs\\TraitDefs\\Traits_Spectrum.xml");
+            info.read("D:\\Steam\\steamapps\\common\\RimWorld\\Mods\\Core\\Defs\\TraitDefs\\Traits_Singular.xml");
+        } catch (SAXException | ParserConfigurationException | IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private String getSaveURI(){
@@ -97,6 +117,24 @@ public class Controller{
         } catch (TransformerException | IOException e) {
             e.printStackTrace();
             logger.push("failed to save");
+        }
+    }
+
+    @FXML protected void handleReadButtonAction(){
+        try {
+            Files.newDirectoryStream(Paths.get(gamePathTextField.getText())).forEach(v->{
+                logger.push("read "+v.getFileName());
+                try {
+                    info.read(v.toString());
+                } catch (SAXException | ParserConfigurationException | IOException e) {
+                    e.printStackTrace();
+                    logger.push("failed to read");
+                }
+            });
+            logger.push("succeed to read");
+        } catch (IOException e) {
+            e.printStackTrace();
+            logger.push("failed to read");
         }
     }
 }

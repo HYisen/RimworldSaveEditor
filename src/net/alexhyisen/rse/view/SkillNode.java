@@ -13,18 +13,18 @@ import net.alexhyisen.rse.model.Skill;
  * Created by Alex on 2017/1/8.
  * SkillNode is the ner.alexhyisen.rse.view of a skill.
  */
-public class SkillNode extends HBox{
-    Skill orig;
+class SkillNode extends HBox{
+    private Skill orig;
 
-    Label defLabel;
-    ChoiceBox<String> passionChoiceBox;
-    TextField levelTextField;
-    Slider levelSlider;
+    private Label defLabel;
+    private ChoiceBox<String> passionChoiceBox;
+    private TextField levelTextField;
+    private Slider levelSlider;
 
     private void init(){
         setSpacing(10);
         defLabel=new Label(orig.getDef());
-        defLabel.setPrefWidth(150);
+        defLabel.setPrefWidth(80);
         defLabel.setAlignment(Pos.CENTER);
         this.getChildren().add(defLabel);
         passionChoiceBox=new ChoiceBox<>(FXCollections.observableArrayList(Skill.VACUUM_PASSION,"Minor","Major"));
@@ -50,13 +50,13 @@ public class SkillNode extends HBox{
         });
         this.getChildren().add(levelTextField);
         levelSlider=new Slider(0,20, Double.valueOf(orig.getLevel()));
-        levelSlider.setPrefWidth(200);
+        levelSlider.setPrefWidth(160);
         levelSlider.setBlockIncrement(1);
         levelSlider.valueProperty().addListener((observable, oldValue, newValue) -> levelTextField.setText(String.valueOf(newValue.intValue())));
         this.getChildren().add(levelSlider);
     }
 
-    public SkillNode(Skill orig) {
+    SkillNode(Skill orig) {
         this.orig = orig;
         init();
     }
