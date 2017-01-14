@@ -78,16 +78,8 @@ public class Controller{
             logger.push("offer a default save name");
         }
         if(gamePathTextField.getText().isEmpty()){
-            gamePathTextField.setText("D:\\Steam\\steamapps\\common\\RimWorld\\Mods\\Core\\Defs\\TraitDefs");
-            logger.push("offer a default gamw path");
-        }
-
-        info=new Info();
-        try {
-            info.read("D:\\Steam\\steamapps\\common\\RimWorld\\Mods\\Core\\Defs\\TraitDefs\\Traits_Spectrum.xml");
-            info.read("D:\\Steam\\steamapps\\common\\RimWorld\\Mods\\Core\\Defs\\TraitDefs\\Traits_Singular.xml");
-        } catch (SAXException | ParserConfigurationException | IOException e) {
-            e.printStackTrace();
+            gamePathTextField.setText("D:\\Steam\\steamapps\\common\\RimWorld");
+            logger.push("offer a default game path");
         }
     }
 
@@ -122,7 +114,9 @@ public class Controller{
 
     @FXML protected void handleReadButtonAction(){
         try {
-            Files.newDirectoryStream(Paths.get(gamePathTextField.getText())).forEach(v->{
+            Files.newDirectoryStream(
+                    Paths.get(gamePathTextField.getText()+"\\Mods\\Core\\Defs\\TraitDefs"))
+                    .forEach(v->{
                 logger.push("read "+v.getFileName());
                 try {
                     info.read(v.toString());
