@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import net.alexhyisen.rse.model.Info;
 import net.alexhyisen.rse.model.Trait;
+import net.alexhyisen.rse.model.Trans;
 
 import java.util.Collections;
 import java.util.List;
@@ -22,12 +23,14 @@ import java.util.stream.Collectors;
 class TraitNode extends HBox{
     private Trait orig;
     private Info info;
+    private Trans trans;
     private ComboBox<String> defComboBox,degreeComboBox,labelComboBox;
     private Map<String,String> degreeDatas;
 
-    TraitNode(Trait orig, Info info) {
+    TraitNode(Trait orig, Info info,Trans trans) {
         this.orig = orig;
         this.info = info;
+        this.trans=trans;
         init();
     }
 
@@ -72,7 +75,7 @@ class TraitNode extends HBox{
             }
             //System.out.println("check "+degree+" from "+defComboBox.getValue());
 
-            String label=degreeDatas.getOrDefault(degree,"unavailable");
+            String label=trans.translate(degreeDatas.getOrDefault(degree,"unavailable"));
             //System.out.println(labelComboBox.getValue()+" -> "+label);
             if(!labelComboBox.getValue().equals(label)){
                 labelComboBox.setValue(label);
@@ -83,7 +86,7 @@ class TraitNode extends HBox{
     private final Consumer<String> handleLabelAction=(value)->{
         //System.out.println("handleLabelAction "+labelComboBox.getValue()+" -> "+value);
         info.getData().forEach((def,data)-> data.forEach((degree, label)->{
-            if(value.equals(label)){
+            if(trans.translate(value).equals(label)){
                 if (!def.equals(defComboBox.getValue())) {
                     defComboBox.setValue(def);
                 }
@@ -104,7 +107,7 @@ class TraitNode extends HBox{
         candidates=degreeDatas.keySet().stream().collect(Collectors.toList());
         degreeComboBox=addComboBox(handleDegreeAction,70,true,
                 orig.getDegree(),candidates.toArray(new String[candidates.size()]));
-        candidates=info.getData().values().stream().flatMap(v->v.values().stream()).collect(Collectors.toList());
+        candidates=info.getData().values().stream().flatMap(v->v.values().stream()).map(trans::translate).collect(Collectors.toList());
         labelComboBox=addComboBox(handleLabelAction,120,false,
                 Optional.ofNullable(degreeDatas.get(orig.getDef())).orElse("unavailable"),
                 candidates.toArray(new String[candidates.size()]));

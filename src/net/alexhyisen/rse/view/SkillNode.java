@@ -1,5 +1,7 @@
 package net.alexhyisen.rse.view;
 
+import com.sun.istack.internal.NotNull;
+import com.sun.istack.internal.Nullable;
 import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
 import javafx.scene.control.ChoiceBox;
@@ -8,6 +10,7 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import net.alexhyisen.rse.model.Skill;
+import net.alexhyisen.rse.model.Trans;
 
 /**
  * Created by Alex on 2017/1/8.
@@ -15,6 +18,7 @@ import net.alexhyisen.rse.model.Skill;
  */
 class SkillNode extends HBox{
     private Skill orig;
+    private Trans trans;
 
     private Label defLabel;
     private ChoiceBox<String> passionChoiceBox;
@@ -23,7 +27,7 @@ class SkillNode extends HBox{
 
     private void init(){
         setSpacing(10);
-        defLabel=new Label(orig.getDef());
+        defLabel=new Label(trans.translate(orig.getDef()));
         defLabel.setPrefWidth(80);
         defLabel.setAlignment(Pos.CENTER);
         this.getChildren().add(defLabel);
@@ -56,8 +60,9 @@ class SkillNode extends HBox{
         this.getChildren().add(levelSlider);
     }
 
-    SkillNode(Skill orig) {
+    SkillNode(Skill orig,Trans trans) {
         this.orig = orig;
+        this.trans=trans;
         init();
     }
 }

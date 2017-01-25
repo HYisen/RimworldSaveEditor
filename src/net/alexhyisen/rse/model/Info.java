@@ -9,17 +9,32 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.TreeMap;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Created by Alex on 2017/1/13.
  * Info is the system to load, save, and control the information acquired from the game.
  */
-public class Info {
-    private Map<String,Map<String,String>> data=new HashMap<>();
+public class Info{
+    private Map<String,Map<String,String>> data;
+
+    //a copy constructor
+    @SuppressWarnings("WeakerAccess")
+    public Info(Info orig) {
+        data=orig.getData().entrySet().stream().
+                collect(Collectors.toMap(Map.Entry::getKey,e-> new LinkedHashMap<>(e.getValue())));
+    }
+
+    public Info() {
+        data=new HashMap<>();
+    }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
 
     private static class TraitsReader extends DefaultHandler{
         String name=null;
@@ -67,7 +82,7 @@ public class Info {
                 switch (name){
                     case "defName":
                         //System.out.println("["+content+"]");
-                        degreeDatas =new TreeMap<>();//Use TreeMap because the keys are numbers.
+                        degreeDatas =new LinkedHashMap<>();//I need it linked in input order to do Trans a favor.
                         traitDefs.put(content, degreeDatas);
                         break;
                     case "degree":

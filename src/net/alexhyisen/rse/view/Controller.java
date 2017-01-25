@@ -2,6 +2,8 @@ package net.alexhyisen.rse.view;
 
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
@@ -9,17 +11,24 @@ import javafx.scene.layout.VBox;
 import net.alexhyisen.rse.model.Data;
 import net.alexhyisen.rse.model.Info;
 import net.alexhyisen.rse.model.Pawn;
+import net.alexhyisen.rse.model.Trans;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.TransformerException;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.ResourceBundle;
 
-public class Controller{
+public class Controller implements Initializable{
     @FXML private Label msgLabel;
     @FXML private TextField savePathTextField;
     @FXML private TextField saveNameTextField;
@@ -27,12 +36,38 @@ public class Controller{
     @FXML private ListView<String> pawnsListView;
     @FXML private VBox traitsVBox;
     @FXML private VBox skillsVBox;
+    @FXML private ComboBox<String> langComboBox;
 
     private Logger logger;
     private Data data;
-    private Info info;
+    private Info info,rawInfo;
+    private Trans trans;
 
     private static final String FILENAME_SUFFIX=".rws";
+    private static final String VACUUM_TRANS_NAME="default";
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        langComboBox.getItems().add(VACUUM_TRANS_NAME);
+        langComboBox.setValue(VACUUM_TRANS_NAME);
+        langComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if(VACUUM_TRANS_NAME.equals(newValue)){
+                trans=new Trans();
+                info=rawInfo;
+            }else {
+                try {
+                    trans=new Trans(gamePathTextField.getText()+"\\Mods\\Core\\Languages\\"+newValue+"\\DefInjected");
+                    logger.push("succeed to load language "+newValue);
+                } catch (FileNotFoundException | XMLStreamException e) {
+                    e.printStackTrace();
+                    logger.push("fail to load language "+newValue);
+                }
+                if(oldValue.equals(VACUUM_TRANS_NAME)){
+                    rawInfo=trans.translate(info);
+                }
+            }
+        });
+    }
 
     private void updatePawnsList(){
         //I shall remove the listener first and then add it back again, to avoid the influence of clear().
@@ -49,10 +84,10 @@ public class Controller{
         skillsVBox.getChildren().remove(2,skillsVBox.getChildren().size());
         Pawn pawn=data.getPawns().get(newValue);
         Arrays.stream(pawn.getTraits())
-                .map(v->new TraitNode(v,info))
+                .map(v->new TraitNode(v,info,trans))
                 .forEach(traitsVBox.getChildren()::add);
         Arrays.stream(pawn.getSkills())
-                .map(SkillNode::new)
+                .map(v->new SkillNode(v,trans))
                 .forEach(skillsVBox.getChildren()::add);
     };
 
@@ -68,6 +103,10 @@ public class Controller{
         if (info==null){
             info=new Info();
             logger.push("initiate info");
+        }
+        if (trans==null){
+            trans=new Trans();
+            logger.push("initiate trans");
         }
         if(saveNameTextField.getText().isEmpty()){
             saveNameTextField.setText("Autosave-2");
@@ -125,6 +164,13 @@ public class Controller{
                     logger.push("failed to read");
                 }
             });
+            Files.newDirectoryStream(Paths.get(gamePathTextField.getText()+"\\Mods\\Core\\Languages"))
+                    .forEach(v->{
+                        //Damn, where is the filter in stream structure?
+                        if(v.toFile().isDirectory()){
+                            langComboBox.getItems().add(v.toFile().getName());
+                        }
+                    });
             logger.push("succeed to read");
         } catch (IOException e) {
             e.printStackTrace();
