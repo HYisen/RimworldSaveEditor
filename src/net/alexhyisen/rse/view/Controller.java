@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-public class Controller implements Initializable{
+public class Controller{
     @FXML private Label msgLabel;
     @FXML private TextField savePathTextField;
     @FXML private TextField saveNameTextField;
@@ -46,8 +46,10 @@ public class Controller implements Initializable{
     private static final String FILENAME_SUFFIX=".rws";
     private static final String VACUUM_TRANS_NAME="default";
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    @FXML private void initialize(){
+        //Believe it or not, despite the inspection, it does initializes.
+        //Moreover, the interface Initializable is superseded, therefore I use the no-arg prototype.
+        //System.out.println("init0004");
         langComboBox.getItems().add(VACUUM_TRANS_NAME);
         langComboBox.setValue(VACUUM_TRANS_NAME);
         langComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
