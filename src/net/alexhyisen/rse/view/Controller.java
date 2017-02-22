@@ -17,16 +17,14 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.TransformerException;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.nio.file.StandardOpenOption;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Controller{
     @FXML private Label msgLabel;
@@ -69,6 +67,42 @@ public class Controller{
                 }
             }
         });
+        loadUserProfile();
+    }
+
+    void handleCloseEvent(){
+        //System.out.println("saving the user profile");
+        saveUserProfile();
+    }
+
+    private void loadUserProfile(){
+        Path path=Paths.get(".","config");
+
+        try {
+            List<String> data=Files.lines(path).collect(Collectors.toList());
+            savePathTextField.setText(data.get(0));
+            saveNameTextField.setText(data.get(1));
+            gamePathTextField.setText(data.get(2));
+        } catch (IOException e) {
+            //e.printStackTrace();
+            System.out.println("doesn't matter, just failed to load the config.");
+        }
+    }
+
+    private void saveUserProfile(){
+        String savePath=savePathTextField.getText();
+        String saveName=saveNameTextField.getText();
+        String gamePath=gamePathTextField.getText();
+        Path path=Paths.get(".","config");
+        try {
+            PrintWriter writer=new PrintWriter(new FileWriter((path.toFile()),false));
+            writer.println(savePath);
+            writer.println(saveName);
+            writer.println(gamePath);
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void updatePawnsList(){
