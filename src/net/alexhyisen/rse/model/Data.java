@@ -144,7 +144,10 @@ public class Data {
                 })
                 //Possible, but unnecessary filter
                 //.filter(v->Data.findOne(v.getFirstChild(),"name").getAttributes().getNamedItem("Class").getNodeValue().equals("NameTriple"))
-                .filter(v->Data.getValue(Data.getNode(v,"def")).equals("Human"))
+                .filter(v->{
+                    String def = Data.getValue(Data.getNode(v, "def"));
+                    return def.equals("Human") || def.equals("Ratkin");
+                })
                 .forEach(v->{
                     //Data.expand(v,1);
                     Pawn pawn=new Pawn(v,sampleTrait,sampleLevel,samplePassion);
